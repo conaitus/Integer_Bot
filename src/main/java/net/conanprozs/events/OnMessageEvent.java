@@ -1,5 +1,6 @@
 package net.conanprozs.events;
 
+import net.conanprozs.Bot;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -11,10 +12,10 @@ public class OnMessageEvent extends ListenerAdapter {
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
 
+
         String message = event.getMessage().getContentRaw().toLowerCase();
         String authorPing = "<@" + event.getAuthor().getId() + "> ";
         String author = event.getAuthor().getName();
-        String prefix = "!";
         String commandPrefix = "!int";
 
         if (message.equals(commandPrefix)) {
@@ -28,7 +29,7 @@ public class OnMessageEvent extends ListenerAdapter {
             switch (command){
 
                 case "ping":
-                    event.getChannel().sendMessage(authorPing + "Pong!").queue();
+                    event.getChannel().sendMessage(authorPing + "Poooooooooooooooooooooooooooooooooooooooooong!").queue();
                     break;
                 case "help":
                     event.getChannel().sendMessage(authorPing + "No").queue();
@@ -36,6 +37,9 @@ public class OnMessageEvent extends ListenerAdapter {
                 case "test":
                     event.getChannel().sendMessage(authorPing + "Testing 1 2 3!").queue();
                     System.out.println(authorPing + "Testing 1 2 3!");
+                    break;
+                case "info":
+                    event.getChannel().sendMessage(authorPing + "Bot is made by Conaitus:flag_mc:").queue();
                     break;
 
                 default:
