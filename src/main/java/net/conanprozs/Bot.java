@@ -41,7 +41,7 @@ public class Bot extends ListenerAdapter {
                     status = "idle";
                 }
 
-            }},0,840);
+            }},0,1762);
     }
 
 
