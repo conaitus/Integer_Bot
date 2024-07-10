@@ -3,6 +3,7 @@ package net.conanprozs.events;
 import net.conanprozs.Bot;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.eclipse.jetty.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -11,6 +12,11 @@ import org.json.simple.parser.ParseException;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.List;
+
+import static java.lang.String.join;
 
 public class OnMessageEvent extends ListenerAdapter {
 
@@ -28,17 +34,17 @@ public class OnMessageEvent extends ListenerAdapter {
 
             event.getMessage().getChannel().sendMessage(authorPing + "Hello, I am a bot!").queue();
 
-        }else if (message.startsWith(commandPrefix)){
+        } else if (message.startsWith(commandPrefix)) {
 
             String[] commandArgs = message.split(" ");
             String command = commandArgs[1];
-            switch (command){
+            switch (command) {
 
                 case "talk":
                     try {
                         onTalk(commandArgs, event);
                     } catch (IOException | ParseException e) {
-                        throw new RuntimeException(e);
+                        event.getChannel().sendMessage(authorPing + "I could not find a response").queue();
                     }
                     break;
                 case "ping":
@@ -69,7 +75,17 @@ public class OnMessageEvent extends ListenerAdapter {
         Object obj = new JSONParser().parse(new FileReader("talk.json"));
         JSONObject jo = (JSONObject) obj;
 
-        String data = (String) jo.get(args[2]);
-        event.getChannel().sendMessage(data).queue();
+        String authorPing = "<@" + event.getAuthor().getId() + "> ";
+
+        args = ArrayUtil.removeFromArray(ArrayUtil.removeFromArray(args, args[1]), args[0]);
+        String pargs = String.join(" ", args);
+        String data = (String) jo.get(pargs);
+
+        if (data == null){
+            event.getChannel().sendMessage(authorPing + "I could not find a response").queue();
+            return;
+        }
+
+        event.getChannel().sendMessage(authorPing + data).queue();
     }
 }
