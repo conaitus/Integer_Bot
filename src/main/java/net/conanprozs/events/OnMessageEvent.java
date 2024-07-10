@@ -4,7 +4,13 @@ import net.conanprozs.Bot;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class OnMessageEvent extends ListenerAdapter {
 
@@ -28,6 +34,13 @@ public class OnMessageEvent extends ListenerAdapter {
             String command = commandArgs[1];
             switch (command){
 
+                case "talk":
+                    try {
+                        onTalk(commandArgs, event);
+                    } catch (IOException | ParseException e) {
+                        throw new RuntimeException(e);
+                    }
+                    break;
                 case "ping":
                     event.getChannel().sendMessage(authorPing + "Poooooooooooooooooooooooooooooooooooooooooong!").queue();
                     break;
@@ -50,5 +63,13 @@ public class OnMessageEvent extends ListenerAdapter {
 
 
         }
+    }
+
+    private void onTalk(String[] args, MessageReceivedEvent event) throws IOException, ParseException {
+        Object obj = new JSONParser().parse(new FileReader("talk.json"));
+        JSONObject jo = (JSONObject) obj;
+
+        String data = (String) jo.get(args[2]);
+        event.getChannel().sendMessage(data).queue();
     }
 }
